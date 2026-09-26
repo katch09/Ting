@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>ภารกิจวันเกิด 30 นี้! 🎂✨</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Confetti สำหรับพลุ -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <!-- Google Fonts: Itim -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      font-family: 'Itim', cursive, sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-amber-100 via-rose-50 to-pink-100 min-h-screen flex items-center justify-center p-4 overflow-hidden relative select-none">
+
+  <!-- ไฟล์เพลง song.mp3 -->
+  <audio id="bgMusic" src="song.mp3" loop preload="auto"></audio>
+
+  <!-- การ์ดหลัก -->
+  <main class="w-full max-w-md bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl p-6 sm:p-8 text-center border-4 border-rose-200 relative transition-all duration-300 z-10">
+    
+    <!-- State 1: หน้าถามชวนเที่ยว -->
+    <div id="askScreen">
+      <!-- รูป GIF น่ารักๆ -->
+      <div class="h-40 flex items-center justify-center mb-3 pointer-events-none">
+        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3ZmdHhkdjN5aG5nd2hpZmp5bmVlbnZmaTBxNXoxbWRqOGlzOW43OCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/cLS1cfxvGOPVpf9g3y/giphy.gif" 
+             alt="Cute Cat" 
+             class="h-full object-contain drop-shadow" />
+      </div>
+
+      <div class="inline-block bg-rose-100 text-rose-600 px-3 py-1 rounded-full text-sm font-bold mb-2">
+        🎂 Special Birthday Mission
+      </div>
+
+      <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
+        วันที่ 30 นี้... วันเกิดเค้า! 🥺
+      </h1>
+
+      <p id="subPrompt" class="text-gray-600 mb-6 text-base sm:text-lg min-h-[3rem] flex items-center justify-center transition-all px-2">
+        ของขวัญไม่ต้องมี แค่ไปเที่ยวกับเค้าทั้งวันได้มั้ยยย? 💕
+      </p>
+
+      <!-- กล่องวางปุ่ม (จัดกึ่งกลางสวยๆ) -->
+      <div id="btnContainer" class="flex items-center justify-center gap-3 min-h-[4rem]">
+        <!-- ปุ่มตกลง -->
+        <button id="yesBtn" onclick="handleYes()" 
+                class="bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-3 px-6 rounded-2xl shadow-lg shadow-rose-300 transition-all duration-200 text-lg whitespace-nowrap">
+          ไปแน่นอน! ✨
+        </button>
+
+        <!-- ปุ่มปฏิเสธ (อยู่ที่เดิม ยิ่งกดยิ่งเล็กลงจนหายไป) -->
+        <button id="noBtn" onclick="shrinkNoBtn(event)" 
+                class="bg-gray-200 hover:bg-gray-300 text-gray-600 font-bold py-3 px-6 rounded-2xl transition-all duration-200 text-lg whitespace-nowrap origin-center">
+          ไม่ไปอะ แบร่ 😜
+        </button>
+      </div>
+    </div>
+
+    <!-- State 2: หน้าสรุปหลังกดตกลง -->
+    <div id="successScreen" class="hidden py-2 flex flex-col items-center">
+      <div class="text-5xl mb-2 animate-bounce">🎉🥳🎂</div>
+
+      <h1 class="text-2xl sm:text-3xl font-bold text-rose-600 mb-2">
+        เย้! ได้ของขวัญวันเกิดแล้ว! 💖
+      </h1>
+      
+      <p class="text-gray-600 mb-4 text-sm sm:text-base">
+        วันที่ 30 นี้เป็นของเค้าทั้งวัน ห้ามเท ห้ามเบี้ยวเด็ดขาด!
+      </p>
+
+      <!-- ตั๋วเดท -->
+      <div class="bg-rose-50 border-2 border-dashed border-rose-300 rounded-2xl p-4 w-full mb-4 text-left shadow-sm">
+        <p class="text-xs text-rose-400 font-bold uppercase tracking-wider mb-1">BIRTHDAY DATE PASS</p>
+        <p class="text-gray-800 font-bold text-base sm:text-lg">🎟️ สิทธิ์ควงเจ้าของวันเกิด 1 วันเต็ม</p>
+        <p class="text-sm text-gray-500 mt-1">📍 วันที่: 30 นี้ทั้งวัน</p>
+        <p class="text-sm text-gray-500">🍱 แผน: กินของอร่อย + ไปเที่ยวตามใจ</p>
+      </div>
+
+      <!-- ป้ายเตือนให้แคปหน้าจอ -->
+      <div class="w-full bg-pink-100/80 border border-pink-200 rounded-xl py-3 px-4 text-rose-500 font-bold text-sm">
+        📸 แคปหน้านี้ส่งมาคอนเฟิร์มด้วยนะะะ!
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+    const subPrompt = document.getElementById("subPrompt");
+    const bgMusic = document.getElementById("bgMusic");
+
+    let noClickCount = 0;
+    let noScale = 1;
+    let yesScale = 1;
+    let musicStarted = false;
+
+    // ข้อความตอนกดปุ่มปฏิเสธ
+    const guiltTexts = [
+      "วันเกิดเค้าเลยนะะะ จะใจร้ายจริงเบ๋อ 🥺",
+      "คิดดีๆ นะ! เจ้าของวันเกิดจะร้องไห้แล้ว 😭",
+      "ปุ่มเริ่มเล็กลงแล้วนะ กด 'ไปแน่นอน' ได้ยังงง",
+      "จะไม่ไปจริงๆ หรอออ เสียใจนะเนี่ยยย",
+      "แหนะ ยังจะพยายามกดอีก! 55555",
+      "ปุ่มหายไปแล้ววว หมดสิทธิ์ปฏิเสธจ้าาา 😜"
+    ];
+
+    function playMusic() {
+      if (!musicStarted) {
+        bgMusic.play().then(() => {
+          musicStarted = true;
+        }).catch(err => {
+          console.log("Audio waiting for interaction:", err);
+        });
+      }
+    }
+
+    // แตะตรงไหนของจอครั้งแรก เพลงสตาร์ททันที
+    window.addEventListener('click', playMusic, { once: true });
+    window.addEventListener('touchstart', playMusic, { once: true });
+
+    // ฟังก์ชันย่อปุ่ม No ให้เล็กลงเรื่อยๆ จนหายไป
+    function shrinkNoBtn(e) {
+      if (e) e.preventDefault();
+      playMusic();
+      noClickCount++;
+
+      // เปลี่ยนข้อความตัดพ้อ
+      const textIndex = Math.min(noClickCount - 1, guiltTexts.length - 1);
+      subPrompt.innerText = guiltTexts[textIndex];
+      subPrompt.classList.add("text-rose-500", "font-bold");
+
+      // ปุ่ม No เล็กลงทีละ 20%
+      noScale -= 0.2;
+
+      // ปุ่ม Yes ขยายใหญ่ขึ้นทีละนิด
+      yesScale += 0.1;
+      yesBtn.style.transform = `scale(${yesScale})`;
+
+      if (noScale <= 0.1) {
+        // หดจนหมด -> ซ่อนปุ่มไปเลย
+        noBtn.style.display = "none";
+        subPrompt.innerText = guiltTexts[guiltTexts.length - 1];
+      } else {
+        noBtn.style.transform = `scale(${noScale})`;
+      }
+    }
+
+    // ฟังก์ชันกดไปแน่นอน
+    function handleYes() {
+      playMusic();
+      document.getElementById("askScreen").classList.add("hidden");
+      document.getElementById("successScreen").classList.remove("hidden");
+
+      // ยิงพลุฉลอง
+      const duration = 3.5 * 1000;
+      const end = Date.now() + duration;
+
+      (function frame() {
+        confetti({
+          particleCount: 5,
+          angle: 60,
+          spread: 60,
+          origin: { x: 0 }
+        });
+        confetti({
+          particleCount: 5,
+          angle: 120,
+          spread: 60,
+          origin: { x: 1 }
+        });
+
+        if (Date.now() < end) {
+          requestAnimationFrame(frame);
+        }
+      }());
+    }
+  </script>
+</body>
+</html>
